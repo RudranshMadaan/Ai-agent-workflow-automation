@@ -1,0 +1,4 @@
+sku,product_name,current_stock,minimum_stock
+P001,Wireless Mouse,3,10
+P002,Mechanical Keyboard,20,10
+P003,USB-C Cable,2,8

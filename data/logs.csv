@@ -1,0 +1,9 @@
+workflow_id,status,execution_time,error
+WF001,success,0.42,
+WF001,failed,0.51,missing column
+WF002,success,0.61,
+WF002,success,0.58,
+WF003,failed,1.20,invalid file
+WF004,success,2.40,
+WF004,failed,3.10,llm timeout
+WF009,success,0.31,
