@@ -8,7 +8,6 @@ from tools.simulators import lookup_order, rank_employee
 
 
 class WorkflowExecutor:
-    """Single execution engine shared by every workflow."""
 
     def __init__(self, llm=None):
         self.llm = llm

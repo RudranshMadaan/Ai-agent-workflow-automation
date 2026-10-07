@@ -66,8 +66,8 @@ class WorkflowRouter:
                 if data.get("confidence", 0) >= 0.65:
                     return chosen, "llm", data
 
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"\n[LLM ROUTER ERROR] {type(e).__name__}: {e}\n")
 
         # Fall back to deterministic routing if LLM fails
         # or its confidence is too low.

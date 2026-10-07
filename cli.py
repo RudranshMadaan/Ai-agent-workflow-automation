@@ -1,6 +1,72 @@
-import argparse, json
+import argparse
+import json
+import ast
+
 from app import router, executor
-p=argparse.ArgumentParser(); p.add_argument("request"); p.add_argument("--context",default="{}")
-a=p.parse_args(); workflow,selected_by,routing=router.route(a.request); c=json.loads(a.context); c["selected_by"]=selected_by
-r=executor.execute(workflow,a.request,c)
-print(json.dumps({"selected_workflow":{"id":workflow.workflow_id,"name":workflow.name,"routing":routing,"selected_by":selected_by},"steps_executed":[s.__dict__ for s in r.steps],"result":r.result,"errors":r.errors},indent=2,default=str))
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="AI Agent Workflow Automation CLI"
+    )
+
+    parser.add_argument(
+        "request",
+        help="Natural language workflow request"
+    )
+
+    parser.add_argument(
+        "--context",
+        default="{}",
+        help="Workflow context or JSON file"
+    )
+
+    args = parser.parse_args()
+
+    # Parse context
+    try:
+        if args.context.endswith(".json"):
+            with open(args.context, "r", encoding="utf-8") as f:
+                context = json.load(f)
+        else:
+            context = json.loads(args.context)
+
+    except json.JSONDecodeError:
+        # Handle Python-style dictionary input
+        try:
+            context = ast.literal_eval(args.context)
+        except (ValueError, SyntaxError):
+            print("Invalid context:", args.context)
+            return
+
+    # Route request
+    workflow, selected_by, routing = router.route(args.request)
+
+    context["selected_by"] = selected_by
+
+    # Execute workflow
+    result = executor.execute(
+        workflow,
+        args.request,
+        context
+    )
+
+    output = {
+        "selected_workflow": {
+            "id": workflow.workflow_id,
+            "name": workflow.name,
+            "routing": routing,
+            "selected_by": selected_by
+        },
+        "steps_executed": [
+            step.__dict__ for step in result.steps
+        ],
+        "result": result.result,
+        "errors": result.errors
+    }
+
+    print(json.dumps(output, indent=2, default=str))
+
+
+if __name__ == "__main__":
+    main()
